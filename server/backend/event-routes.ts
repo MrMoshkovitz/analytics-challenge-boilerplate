@@ -5,8 +5,11 @@ import { Request, Response } from "express";
 
 // some useful database functions in here:
 import {
+  getAllEvents,
+  getEventsBy
+  
 } from "./database";
-import { Event, weeklyRetentionObject } from "../../client/src/models/event";
+import { browser, Event, weeklyRetentionObject } from "../../client/src/models/event";
 import { ensureAuthenticated, validateMiddleware } from "./helpers";
 
 import {
@@ -19,7 +22,7 @@ const router = express.Router();
 
 // Routes
 
-interface Filter {
+export interface Filter {
   sorting: string;
   type: string;
   browser: string;
@@ -28,35 +31,74 @@ interface Filter {
 }
 
 router.get('/all', (req: Request, res: Response) => {
-  res.send('/all')
-    
+  console.log("get /all")
+  res.send(getAllEvents())
+  
 });
 
 router.get('/all-filtered', (req: Request, res: Response) => {
-  res.send('/all-filtered')
+  console.log('/all-filtered')
+  // let filteredEvents: Event[]
+  let query = req.query;
+  delete query.page;
+  delete query.limit;
+  const filters = query;
+  let result = []
+  result = getEventsBy("browser", filters.browser)
+  // if(filters) {
+  //   console.log("Filters", filters)
+  //   if(filters.browser){
+  //     console.log("========== Browser Filter ==========")
+  //     console.log("The Browser Is: ", filters.browser)
+  //     result = getEventsByBrowser(filters.browser)
+  //   }
+  //   if(filters.type){
+  //     console.log("========== Type Filter ==========")
+  //     console.log("The Type Is: ", filters.type)
+  //     result = getEventsByType(filters.type)
+  //   }
+  //   if(filters.search){
+  //     console.log("========== Search Filter ==========")
+  //     console.log("The Search Is: ", filters.search)
+  //     result = getEventsBySearch(filters.search)
+  //   }
+  //   if(filters.offset){
+  //     console.log("========== Offset Filter ==========")
+  //     console.log("The Type Is: ", filters.offset)
+  //     result = getEventsByOffset(filters.offset)
+  //   }
+    
+  // }
+  res.json(result)
 });
 
 router.get('/by-days/:offset', (req: Request, res: Response) => {
+  console.log('/by-days/:offset')
   res.send('/by-days/:offset')
 });
 
 router.get('/by-hours/:offset', (req: Request, res: Response) => {
+  console.log('/by-hours/:offset')
   res.send('/by-hours/:offset')
 });
 
 router.get('/today', (req: Request, res: Response) => {
+  console.log('/today')
   res.send('/today')
 });
 
 router.get('/week', (req: Request, res: Response) => {
+  console.log('/week')
   res.send('/week')
 });
 
 router.get('/retention', (req: Request, res: Response) => {
   const {dayZero} = req.query
+  console.log('/retention')
   res.send('/retention')
 });
 router.get('/:eventId',(req : Request, res : Response) => {
+  console.log('/:eventId')
   res.send('/:eventId')
 });
 

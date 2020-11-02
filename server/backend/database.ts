@@ -52,6 +52,7 @@ import {
   Event
 } from "../../client/src/models";
 import Fuse from "fuse.js";
+import {Filter} from "./event-routes";
 import {
   isPayment,
   getTransferAmount,
@@ -174,7 +175,6 @@ export const searchUsers = (query: string) => {
 export const removeUserFromResults = (userId: User["id"], results: User[]) =>
   remove({ id: userId }, results);
 
-// convenience methods
 
 // User
 export const getUserBy = (key: string, value: any) => getBy(USER_TABLE, key, value);
@@ -863,5 +863,31 @@ export const getTransactionsBy = (key: string, value: string) =>
 /* istanbul ignore next */
 export const getTransactionsByUserId = (userId: string) => getTransactionsBy("receiverId", userId);
 
+
+
+
+
+
+
+// convenience methods
+export const getAllEvents = () : Event[] => db.get(EVENT_TABLE).value();
+export const addEvent = (event: Event) => {return db.get(EVENT_TABLE).push(event).write()};
+
+
+export const getEventsBy = (key: string, value: string) => getAllBy(EVENT_TABLE, key, value);
+
+// export const getEventsByBrowser = (browser: string) => getEventsBy("browser", browser);
+// export const getEventsByType = (type: string) => getEventsBy("name", type);
+// export const getEventsBySearch = (search: string) => getEventsBy("search", search);
+// // export const getEventsByDate = (browser: string) => getEventsBy("browser", browser); //Might Not Be Good
+// export const getEventsByOffset = (offset: number) => getEventsBy("offset", offset.toString()); //Might Not Be Good
+
+
+
+// #   sorting: string; // '+date'/'-date'
+// #   type: string; 
+// #   browser: string;
+// #   search: string;
+// #   offset: number;
 
 export default db;

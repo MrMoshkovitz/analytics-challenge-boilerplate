@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/ignored
 /.pnp
 .pnp.js
 # testing
