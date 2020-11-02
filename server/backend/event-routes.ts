@@ -38,38 +38,13 @@ router.get('/all', (req: Request, res: Response) => {
 
 router.get('/all-filtered', (req: Request, res: Response) => {
   console.log('/all-filtered')
-  // let filteredEvents: Event[]
   let query = req.query;
-  delete query.page;
-  delete query.limit;
-  const filters = query;
-  let result = []
-  result = getEventsBy("browser", filters.browser)
-  // if(filters) {
-  //   console.log("Filters", filters)
-  //   if(filters.browser){
-  //     console.log("========== Browser Filter ==========")
-  //     console.log("The Browser Is: ", filters.browser)
-  //     result = getEventsByBrowser(filters.browser)
-  //   }
-  //   if(filters.type){
-  //     console.log("========== Type Filter ==========")
-  //     console.log("The Type Is: ", filters.type)
-  //     result = getEventsByType(filters.type)
-  //   }
-  //   if(filters.search){
-  //     console.log("========== Search Filter ==========")
-  //     console.log("The Search Is: ", filters.search)
-  //     result = getEventsBySearch(filters.search)
-  //   }
-  //   if(filters.offset){
-  //     console.log("========== Offset Filter ==========")
-  //     console.log("The Type Is: ", filters.offset)
-  //     result = getEventsByOffset(filters.offset)
-  //   }
-    
-  // }
-  res.json(result)
+  const {browser, type, offset, search, sorting} = query
+  
+  const filter = {browser, type, offset: Number(offset)||0, search, sorting}
+  let filteredEvents = getEventsBy(filter)
+  
+  res.json(filteredEvents)
 });
 
 router.get('/by-days/:offset', (req: Request, res: Response) => {

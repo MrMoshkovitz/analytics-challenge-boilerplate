@@ -874,7 +874,17 @@ export const getAllEvents = () : Event[] => db.get(EVENT_TABLE).value();
 export const addEvent = (event: Event) => {return db.get(EVENT_TABLE).push(event).write()};
 
 
-export const getEventsBy = (key: string, value: string) => getAllBy(EVENT_TABLE, key, value);
+export const getEventsBy = ({
+  browser, type, offset, search, sorting
+}:{
+  browser?: string|undefined;
+  type?:string|undefined;
+  offset?:number|undefined;
+  search?:string|undefined;
+  sorting?:string|undefined
+}) :Event[]|{events:Event[], more:boolean} => {
+  
+}
 
 // export const getEventsByBrowser = (browser: string) => getEventsBy("browser", browser);
 // export const getEventsByType = (type: string) => getEventsBy("name", type);
