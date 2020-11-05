@@ -18,7 +18,8 @@ import {
   getAllEvents,
   getEventsBy,
   addEvent,
-  getByDate
+  getByDate,
+  getRetentionCohort
   
 } from "./database";
 import { browser, Event, weeklyRetentionObject } from "../../client/src/models/event";
@@ -88,9 +89,14 @@ router.get('/week', (req: Request, res: Response) => {
 });
 
 router.get('/retention', (req: Request, res: Response) => {
-  const {dayZero} = req.query
-  console.log('/retention')
-  res.send('/retention')
+  console.log(stage('/retention'))
+  try {
+    const {dayZero}:{dayZero:number|string} = req.query
+    const retentionChorot:weeklyRetentionObject[] = getRetentionCohort(Number(dayZero))
+    res.json(retentionChorot)
+  } catch (err) {
+    console.log(subject("error"), error(err))
+  }
 });
 router.get('/:eventId',(req : Request, res : Response) => {
   console.log('/:eventId')

@@ -24,6 +24,17 @@ export const weekDays = (date: number): {}[] => {
     let newDate: string = changeDateFormat(new Date(startDate + OneDay * i));
     dateObj.push({ date: newDate, count: 0 });
   }
+
   return dateObj;
 };
+
+export const seperateWeeks = (dayZero: number): {}[] => {
+    let startDate = dayZero
+    let today = new Date(new Date(dayZero).toDateString()).getTime()
+    let endDate = today + OneWeek;
+    
+    //This Return {}[] every Week has start and End
+    //return [{startDate: date, endDate:date},{startDate: date, endDate:date},{startDate: date, endDate:date}]
+
+}
 //launch day of the app.

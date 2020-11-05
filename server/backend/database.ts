@@ -50,6 +50,7 @@ import {
   TransactionQueryPayload,
   DefaultPrivacyLevel,
   Event,
+  weeklyRetentionObject
 } from "../../client/src/models";
 import Fuse from "fuse.js";
 import { Filter } from "./event-routes";
@@ -72,7 +73,7 @@ import {
 import { DbSchema } from "../../client/src/models/db-schema";
 import { eventNames } from "process";
 import { values } from "lodash";
-import { OneDay, changeDateFormat, weekDays} from "./timeFrames";
+import { OneDay, changeDateFormat, weekDays, seperateWeeks} from "./timeFrames";
 // import * as chalk from 'chalk';
 const chalk = require("chalk");
 const success = (...args: any[]) => chalk.rgb(255, 255, 255).bgRgb(32, 128, 0)(...args);
@@ -924,6 +925,7 @@ export const getByDate = (offset:number): {}[] => {
   let finishDate:number = new Date(new Date().toDateString()).getTime() + day * (1 - offset);
   let startDate: number = new Date(new Date().toDateString()).getTime() - day * (offset + 6); 
   let newDatesArray = weekDays(startDate)
+  console.log(links(JSON.stringify(newDatesArray)))
 
 
 
@@ -946,33 +948,125 @@ export const getByDate = (offset:number): {}[] => {
   // .filter
 
 }
-// export const transactionsWithinDateRange = curry(
-//   (dateRangeStart: string, dateRangeEnd: string, transactions: Transaction[]) => {
-//     if (!dateRangeStart || !dateRangeEnd) {
-//       return transactions;
-//     }
 
-//     return filter(
-//       (transaction: Transaction) =>
-//         isWithinInterval(new Date(transaction.createdAt), {
-//           start: new Date(dateRangeStart),
-//           end: new Date(dateRangeEnd),
-//         }),
-//       transactions
-//     );
-//   }
-// );
 
-// export const getEventsByBrowser = (browser: string) => getEventsBy("browser", browser);
-// export const getEventsByType = (type: string) => getEventsBy("name", type);
-// export const getEventsBySearch = (search: string) => getEventsBy("search", search);
-// // export const getEventsByDate = (browser: string) => getEventsBy("browser", browser); //Might Not Be Good
-// export const getEventsByOffset = (offset: number) => getEventsBy("offset", offset.toString()); //Might Not Be Good
+export const getRetentionCohort = (dayZeroNumber:number):weeklyRetentionObject[] => {
+  const dayZero:number = new Date(new Date(dayZeroNumber).toDateString()).getTime()
+  let weeksSeperated = seperateWeeks(dayZero)
+  const signups: Event[] = db
+  .get(EVENT_TABLE)
+  .filter((event: Event) => event.name === "signup")
+  .orderBy('date')
+  .groupBy(event:Event) =>        //Need To Group By The Week Number in the weeksSeperated
+  .value()
 
-// #   sorting: string; // '+date'/'-date'
-// #   type: string;
-// #   browser: string;
-// #   search: string;
-// #   offset: number;
+  //Object.keys(signups) for each key the length is the new users for the week
+  // // // let newUsersThisWeek = signups.length
+  //Need To Count Logins EVent by unique User ID Remove Duplicates from same week !!
+  let logins Amount
+
+  let weeklyRetention = [{
+    registrationWeek:1,
+    newUsers:2,
+    weeklyRetention:[100,2,3],
+    start:"start",
+    end:"end"
+  },
+  {
+    registrationWeek:2,
+    newUsers:6,
+    weeklyRetention:[100,5,5,51,2,3],
+    start:"start",
+    end:"end"
+  }]
+  return  weeklyRetention 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // const signups:Event[] = db
+  // .get('events')
+  // .filter(
+  //   (event: Event) => event.name === "signup"
+  // )
+  // .orderBy('date')
+  // .value()
+  // const logins : Event[] = db
+  // .get('events')
+  // .filter({ ['name']: 'login' })
+  // .orderBy('date')
+  // .value()
+
+  // const weekEnds:number[] = []
+  // // stores the end time of every week since dayZero
+  
+  // for(
+  //     let d = new Date(new Date(dayZero-2*OneHour).toDateString()).getTime() ;
+  //     d < new Date(new Date().toDateString()).getTime()+OneWeek ;
+  //     d+=OneWeek+2*OneHour
+  //   ){ 
+  //   weekEnds.push(new Date(new Date(d).toDateString()).getTime()+OneWeek-1)
+  // }
+  
+  // const weeklyRetention:weeklyRetentionObject[] = weekEnds.map((weekEnd,weekNumber) => {
+  //   //first isolate the new Users the week
+    
+  //   let weeksNewSignups = signups.filter((signup:Event) => signup.date <= weekEnd)
+  //   signups.splice(0, weeksNewSignups.length);
+    
+  //   //second isolate the logins of users who started this week
+  //   const loginsByNewUsers = logins
+  //   .filter(({ distinct_user_id : loginId })=>{
+  //     return weeksNewSignups.some(({distinct_user_id:signupId})=>loginId===signupId)
+  //   })
+    
+  //   const weeklyRetention:number[] = []
+    
+  //   //third for every following week we must find how many of the new Users came back 
+  //   for(let i=weekNumber;i<weekEnds.length;i++){
+      
+  //     const returnedUsers : {id:string,date:string}[] = []
+      
+  //     let weeksLogins = loginsByNewUsers.filter((login:Event) => login.date <= weekEnds[i])
+  //     loginsByNewUsers.splice(0, weeksLogins.length);
+      
+  //     weeksLogins.forEach(({distinct_user_id,date})=>{
+  //       if(!returnedUsers.some(user=>user.id===distinct_user_id)){
+  //         returnedUsers.push({id:distinct_user_id,date:new Date (date).toDateString()})
+  //       }
+  //     })
+  //     if(weekNumber === 0 && i === 1 || weekNumber === 4 && i === 5){
+  //     console.log('week'+weekNumber,returnedUsers)
+  //     }
+  //     weeklyRetention.push(returnedUsers.length)
+  //   } 
+    
+  //   const newUsers = weeksNewSignups.length
+  //   const weeklyRetentionPercent= [100].concat(
+  //     newUsers
+  //     ?weeklyRetention.slice(1).map(returnedUsers=>Math.round(100*returnedUsers/newUsers))
+  //     :weeklyRetention.slice(1)
+  //     )
+  //     return {
+  //       registrationWeek: weekNumber,
+  //     start:new Date( dayZero + weekNumber * OneWeek ).toDateString().slice(4),
+  //     end:(new Date( weekEnds[weekNumber]-1)).toDateString().slice(4),
+  //     newUsers:newUsers,      
+  //     weeklyRetention:weeklyRetentionPercent
+  //   }
+  // })
+
+
 
 export default db;
