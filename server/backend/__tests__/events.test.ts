@@ -52,7 +52,7 @@ describe("main test", () => {
     expect(isEventArray(allEvents)).toBe(true);
   });
 
-  it.only("can get unique sessions count by day", async () => {
+  it("can get unique sessions count by day", async () => {
     const { body: sessionsByDays } = await request(app).get("/events/by-days/0").expect(200);
     console.log(stage("sessionsByDays.length"), impText(sessionsByDays.length));
     console.log(
