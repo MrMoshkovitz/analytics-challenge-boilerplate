@@ -21,7 +21,7 @@ import {
   countBy,
   groupBy,
 } from "lodash/fp";
-import { isWithinInterval } from "date-fns";
+import { getDate, isWithinInterval } from "date-fns";
 import low from "lowdb";
 import FileSync from "lowdb/adapters/FileSync";
 import shortid from "shortid";
@@ -49,10 +49,10 @@ import {
   NotificationResponseItem,
   TransactionQueryPayload,
   DefaultPrivacyLevel,
-  Event
+  Event,
 } from "../../client/src/models";
 import Fuse from "fuse.js";
-import {Filter} from "./event-routes";
+import { Filter } from "./event-routes";
 import {
   isPayment,
   getTransferAmount,
@@ -70,7 +70,18 @@ import {
   isCommentNotification,
 } from "../../client/src/utils/transactionUtils";
 import { DbSchema } from "../../client/src/models/db-schema";
-
+import { eventNames } from "process";
+import { values } from "lodash";
+import { OneDay, changeDateFormat, weekDays} from "./timeFrames";
+// import * as chalk from 'chalk';
+const chalk = require("chalk");
+const success = (...args: any[]) => chalk.rgb(255, 255, 255).bgRgb(32, 128, 0)(...args);
+const stage = (...args: any[]) => chalk.bold.bgRgb(0, 0, 255).inverse(...args);
+const impText = (...args: any[]) => chalk.keyword("orange").inverse(...args);
+const links = (...args: any[]) => chalk.bold.blue(...args);
+const signs = (...args: any[]) => chalk.rgb(32, 128, 0).bold(...args);
+const error = (...args: any[]) => chalk.rgb(255, 255, 255).bgRgb(128, 0, 0)(...args);
+const subject = (...args: any[]) => chalk.bold.magenta.bold(...args)
 
 export type TDatabase = {
   users: User[];
@@ -175,7 +186,6 @@ export const searchUsers = (query: string) => {
 export const removeUserFromResults = (userId: User["id"], results: User[]) =>
   remove({ id: userId }, results);
 
-
 // User
 export const getUserBy = (key: string, value: any) => getBy(USER_TABLE, key, value);
 export const getUserId = (user: User): string => user.id;
@@ -183,6 +193,7 @@ export const getUserById = (id: string) => getUserBy("id", id);
 export const getUserByUsername = (username: string) => getUserBy("username", username);
 
 export const createUser = (userDetails: Partial<User>): User => {
+  console.log("createUser");
   const password = bcrypt.hashSync(userDetails.password!, 10);
   const user: User = {
     id: shortid(),
@@ -205,6 +216,7 @@ export const createUser = (userDetails: Partial<User>): User => {
 };
 
 const saveUser = (user: User) => {
+  console.log("saveUser");
   db.get(USER_TABLE).push(user).write();
 };
 
@@ -863,28 +875,97 @@ export const getTransactionsBy = (key: string, value: string) =>
 /* istanbul ignore next */
 export const getTransactionsByUserId = (userId: string) => getTransactionsBy("receiverId", userId);
 
-
-
-
-
-
-
 // convenience methods
-export const getAllEvents = () : Event[] => db.get(EVENT_TABLE).value();
-export const addEvent = (event: Event) => {return db.get(EVENT_TABLE).push(event).write()};
-
+export const getAllEvents = (): Event[] => db.get(EVENT_TABLE).value();
+export const addEvent = (event: Event) => {
+  return db.get(EVENT_TABLE).push(event).write();
+};
 
 export const getEventsBy = ({
-  browser, type, offset, search, sorting
-}:{
-  browser?: string|undefined;
-  type?:string|undefined;
-  offset?:number|undefined;
-  search?:string|undefined;
-  sorting?:string|undefined
-}) :Event[]|{events:Event[], more:boolean} => {
-  
+  browser,
+  type,
+  offset,
+  search,
+  sorting = "-date",
+}: {
+  browser?: string;
+  type?: string;
+  offset?: number;
+  search?: string;
+  sorting?: string;
+}): { events: Event[]; more: boolean } => {
+  let filterToSort = sorting.slice(1);
+  let direction = sorting.slice(0, 1);
+
+  const result = db
+    .get(EVENT_TABLE)
+    .orderBy(filterToSort, direction === "+" ? "asc" : "desc")
+    .filter((event) => {
+      let incomeBrowser = browser ? event.browser === browser : true;
+      let incomeType = type ? event.name === type : true;
+      let incomeSearch = search
+        ? Object.values(event).some((value: string) => value.toString().includes(search))
+        : true;
+      return incomeBrowser && incomeType && incomeSearch;
+      // event. === browser
+      // event.browser === browser
+    })
+    .value();
+  let newResult = result;
+
+  newResult = offset ? result.slice(0, offset) : result;
+  const more = offset ? result.length > offset : false;
+
+  return { events: newResult, more };
+};
+export const getByDate = (offset:number): {}[] => {
+  let day = 24 * 60 * 60 * 1000
+  let finishDate:number = new Date(new Date().toDateString()).getTime() + day * (1 - offset);
+  let startDate: number = new Date(new Date().toDateString()).getTime() - day * (offset + 6); 
+  let newDatesArray = weekDays(startDate)
+
+  console.log((stage(finishDate)),(success(finishDate)))
+  console.log(finishDate, startDate)
+  console.log((stage(startDate)), (success(startDate)))
+  console.log(JSON.stringify(stage("newDatesArray")), JSON.stringify(success(newDatesArray)))
+
+
+  let result = db
+  .get(EVENT_TABLE)
+  .filter((event:Event) => (event.date < finishDate) && (event.date > startDate))
+  .orderBy("date","asc")
+  .groupBy((event:Event) => changeDateFormat(new Date(event.date)))
+  .value()
+  console.log(subject("|||||||||||"), success(JSON.stringify(result)))
+  let dailyEvents:{}[];
+  dailyEvents = Object.keys(result).map((key) => {
+    let uniqEvent:Event[] = uniqBy("session_id",result[key])
+    return {date: key , count : uniqEvent.length}
+  })
+  dailyEvents.map((date:any) => {
+    let i:number = newDatesArray.findIndex((date2:any) => date.date === date2.date)
+    newDatesArray[i] = i > -1 ? date :newDatesArray[i]
+  })
+  return newDatesArray
+  // .filter
+
 }
+// export const transactionsWithinDateRange = curry(
+//   (dateRangeStart: string, dateRangeEnd: string, transactions: Transaction[]) => {
+//     if (!dateRangeStart || !dateRangeEnd) {
+//       return transactions;
+//     }
+
+//     return filter(
+//       (transaction: Transaction) =>
+//         isWithinInterval(new Date(transaction.createdAt), {
+//           start: new Date(dateRangeStart),
+//           end: new Date(dateRangeEnd),
+//         }),
+//       transactions
+//     );
+//   }
+// );
 
 // export const getEventsByBrowser = (browser: string) => getEventsBy("browser", browser);
 // export const getEventsByType = (type: string) => getEventsBy("name", type);
@@ -892,10 +973,8 @@ export const getEventsBy = ({
 // // export const getEventsByDate = (browser: string) => getEventsBy("browser", browser); //Might Not Be Good
 // export const getEventsByOffset = (offset: number) => getEventsBy("offset", offset.toString()); //Might Not Be Good
 
-
-
 // #   sorting: string; // '+date'/'-date'
-// #   type: string; 
+// #   type: string;
 // #   browser: string;
 // #   search: string;
 // #   offset: number;
