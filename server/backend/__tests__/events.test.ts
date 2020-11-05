@@ -61,14 +61,11 @@ describe("main test", () => {
     );
 
     expect(sessionsByDays.length).toBe(7);
-    console.log(text(JSON.stringify(sessionsByDays)));
     let testingResult = sessionsByDays.reduce(
       (sum: number, day: { date: string; count: number }) => (sum += day.count),
       0
     )
 
-    console.log(stage("testingResult"), error(JSON.stringify(testingResult))
-    );
     expect(
       sessionsByDays.reduce(
         (sum: number, day: { date: string; count: number }) => (sum += day.count),

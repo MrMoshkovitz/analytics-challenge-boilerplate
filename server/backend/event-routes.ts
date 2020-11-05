@@ -63,9 +63,9 @@ router.get('/all-filtered', (req: Request, res: Response) => {
 
 router.get('/by-days/:offset', (req: Request, res: Response) => {
   console.log(links('/by-days/:offset'))
-  const {offset} = req.query;
+  const {offset} = req.params;
   console.log(subject("offset"), error(offset))
-  let filteredEvents = getByDate(offset)
+  let filteredEvents = getByDate(Number(offset))
 
   res.json(filteredEvents)
 

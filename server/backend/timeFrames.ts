@@ -5,7 +5,6 @@ export const changeDateFormat = (date: Date): string => {
     const chalk = require("chalk");
     const stage = (...args: any[]) => chalk.bold.bgRgb(0, 0, 255).inverse(...args);
     const success = (...args: any[]) => chalk.rgb(255, 255, 255).bgRgb(32, 128, 0)(...args);
-    console.log(stage("Initial Date"), success(date))
 
 
     var displayDate =
@@ -15,7 +14,6 @@ export const changeDateFormat = (date: Date): string => {
     "/" +
     +date.getFullYear();
     
-    console.log(stage("end Date"), success(displayDate))
   return displayDate;
 };
 

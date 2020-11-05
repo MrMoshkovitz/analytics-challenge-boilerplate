@@ -83,6 +83,7 @@ const signs = (...args: any[]) => chalk.rgb(32, 128, 0).bold(...args);
 const error = (...args: any[]) => chalk.rgb(255, 255, 255).bgRgb(128, 0, 0)(...args);
 const subject = (...args: any[]) => chalk.bold.magenta.bold(...args)
 
+
 export type TDatabase = {
   users: User[];
   contacts: Contact[];
@@ -924,10 +925,6 @@ export const getByDate = (offset:number): {}[] => {
   let startDate: number = new Date(new Date().toDateString()).getTime() - day * (offset + 6); 
   let newDatesArray = weekDays(startDate)
 
-  console.log((stage(finishDate)),(success(finishDate)))
-  console.log(finishDate, startDate)
-  console.log((stage(startDate)), (success(startDate)))
-  console.log(JSON.stringify(stage("newDatesArray")), JSON.stringify(success(newDatesArray)))
 
 
   let result = db
@@ -936,7 +933,6 @@ export const getByDate = (offset:number): {}[] => {
   .orderBy("date","asc")
   .groupBy((event:Event) => changeDateFormat(new Date(event.date)))
   .value()
-  console.log(subject("|||||||||||"), success(JSON.stringify(result)))
   let dailyEvents:{}[];
   dailyEvents = Object.keys(result).map((key) => {
     let uniqEvent:Event[] = uniqBy("session_id",result[key])
