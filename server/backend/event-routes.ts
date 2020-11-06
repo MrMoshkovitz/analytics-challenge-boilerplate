@@ -19,7 +19,8 @@ import {
   getEventsBy,
   addEvent,
   getByDate,
-  getRetentionCohort
+  getRetentionCohort,
+  getByHour
   
 } from "./database";
 import { browser, Event, weeklyRetentionObject } from "../../client/src/models/event";
@@ -72,6 +73,25 @@ router.get('/by-days/:offset', (req: Request, res: Response) => {
 
   // res.send('/by-days/:offset')
 });
+
+
+
+
+
+
+
+
+router.get('/by-hours/:offset', (req: Request, res: Response) => {
+  try{
+  const {offset} = req.params
+  res.json(getByHour(Number(offset)))
+  }catch(error){
+    console.error(error)
+  }
+  // res.send(1)
+});
+
+
 
 router.get('/by-hours/:offset', (req: Request, res: Response) => {
   console.log('/by-hours/:offset')
