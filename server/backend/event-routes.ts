@@ -92,12 +92,14 @@ router.get('/retention', (req: Request, res: Response) => {
   console.log(stage('/retention'))
   try {
     const {dayZero}:{dayZero:number|string} = req.query
+    console.log(subject("dayZero"), stage("/Retention"), success(dayZero))
     const retentionChorot:weeklyRetentionObject[] = getRetentionCohort(Number(dayZero))
     res.json(retentionChorot)
   } catch (err) {
-    console.log(subject("error"), error(err))
+    console.log(subject("error"), stage("Retention"), error(err))
   }
 });
+
 router.get('/:eventId',(req : Request, res : Response) => {
   console.log('/:eventId')
   res.send('/:eventId')
