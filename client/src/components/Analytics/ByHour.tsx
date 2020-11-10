@@ -1,33 +1,31 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { Border } from "./styledComponents";
 import { ErrorBoundary } from "./ErrorBoundaries";
 
-const data = [
-  // sessions count for 29/10/2020
-  {
-    hour: "00:00",
-    count: 12,
-  },
-  {
-    hour: "01:00",
-    count: 43,
-  },
-  {
-    hour: "02:00",
-    count: 7,
-  },
-  {
-    hour: "03:00",
-    count: 78,
-  },
-  {
-    hour: "23:00",
-    count: 54,
-  },
-];
+
+
+const url = (offset: number) => {
+  return `http://localhost:3001/events/by-hours/${offset}`;
+};
+
+
+export type ByHourProps = {
+  date: string;
+  count: number;
+}[];
+
+
 
 export const ByHour: React.FC = () => {
+  const [data, setData] = useState<ByHourProps>([]);
+  useEffect(() => {
+    fetch(url(25))
+      .then((res) => res.json())
+      .then((res) => {
+        setData(res);
+      });
+  }, []);
   return (
     <Border borderColor="red">
       <ErrorBoundary>

@@ -54,6 +54,7 @@ router.get('/all-filtered', (req: Request, res: Response) => {
   console.log('/all-filtered')
   let query = req.query;
   const {browser, type, offset, search, sorting} = query
+  console.log("I Am Query", query)
   // const filter: Filter = query
 
   

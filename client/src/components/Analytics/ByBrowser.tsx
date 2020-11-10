@@ -4,34 +4,16 @@ import { Border } from "./styledComponents";
 import { ErrorBoundary } from "./ErrorBoundaries";
 
 const url = (offset: number) => {
-  return `http://localhost:3001/events/by-days/${offset}`;
+  return `http://localhost:3001/events/browser/${offset}`;
 };
-// const data = [
-//   {
-//     date: "24/10/2020",
-//     count: 12,
-//   },
-//   {
-//     date: "25/10/2020",
-//     count: 43,
-//   },
-//   {
-//     date: "26/10/2020",
-//     count: 7,
-//   },
-//   {
-//     date: "30/10/2020",
-//     count: 78,
-//   },
-// ];
 
-export type ByDayProps = {
-  date: string;
+export type ByBrowserProps = {
+  name: string;
   count: number;
 }[];
 
 export const ByDay: React.FC = () => {
-  const [data, setData] = useState<ByDayProps>([]);
+  const [data, setData] = useState<ByBrowserProps>([]);
 
   useEffect(() => {
     fetch(url(25))

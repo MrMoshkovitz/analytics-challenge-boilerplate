@@ -18601,39 +18601,6 @@
       "balance": 75609,
       "createdAt": "2020-10-01T09:13:42.678Z",
       "modifiedAt": "2020-10-29T19:34:28.576Z"
-    },
-    {
-      "id": "vj1HvayIk",
-      "uuid": "269448f7-9134-4401-9f1c-b51b16323e52",
-      "firstName": "Nir",
-      "lastName": "Fainshtein",
-      "username": "Fainir",
-      "password": "$2a$10$x1thTjPTOeSGgCfo.XXCauy8FZmN7/Me3ucVIIsLo3SzyVj1BV1/O",
-      "balance": 0,
-      "createdAt": "2020-11-08T10:27:57.070Z",
-      "modifiedAt": "2020-11-08T10:27:57.070Z"
-    },
-    {
-      "id": "q1mRQBRTF",
-      "uuid": "af932202-9eae-45e6-991f-1145fac3009a",
-      "firstName": "Nir",
-      "lastName": "Fainshtein",
-      "username": "Fainir",
-      "password": "$2a$10$V3PLPbXCTXAZg6cNyFattOWUeuuI8lIXzHoMTPyJ69EFbtC8eghgK",
-      "balance": 0,
-      "createdAt": "2020-11-08T10:35:00.741Z",
-      "modifiedAt": "2020-11-08T10:35:00.741Z"
-    },
-    {
-      "id": "4cLta990s",
-      "uuid": "20322bbf-2621-4efc-a56f-e8739aabaa64",
-      "firstName": "Nir",
-      "lastName": "Fainshtein",
-      "username": "Fainir",
-      "password": "$2a$10$iQh2r4ZKWk5aNm6D9PJY..fcLc8AH27eLMSufYVjRgcA2y6i1/TZe",
-      "balance": 0,
-      "createdAt": "2020-11-08T10:35:23.245Z",
-      "modifiedAt": "2020-11-08T10:35:23.245Z"
     }
   ],
   "contacts": [
@@ -20388,17 +20355,6 @@
       "isDeleted": false,
       "createdAt": "2019-10-31T03:08:47.374Z",
       "modifiedAt": "2020-10-29T06:01:00.266Z"
-    },
-    {
-      "id": "ZixgO3Bix",
-      "uuid": "4f46df89-e613-43db-81fd-7037ca3fc506",
-      "userId": "vj1HvayIk",
-      "bankName": "aaaaa",
-      "accountNumber": "121212121",
-      "routingNumber": "121212121",
-      "isDeleted": false,
-      "createdAt": "2020-11-08T10:28:36.975Z",
-      "modifiedAt": "2020-11-08T10:28:36.975Z"
     }
   ],
   "transactions": [
